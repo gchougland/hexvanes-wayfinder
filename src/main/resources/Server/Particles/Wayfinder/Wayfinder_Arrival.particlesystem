@@ -1,0 +1,13 @@
+{
+  "CullDistance": 50,
+  "BoundingRadius": 5,
+  "LifeSpan": 1.5,
+  "Spawners": [
+    {
+      "SpawnerId": "Wayfinder_Arrival_Flash"
+    },
+    {
+      "SpawnerId": "Wayfinder_Arrival_Burst"
+    }
+  ]
+}

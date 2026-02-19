@@ -1,0 +1,16 @@
+{
+  "CullDistance": 50,
+  "BoundingRadius": 2,
+  "LifeSpan": 1.0,
+  "Spawners": [
+    {
+      "SpawnerId": "Wayfinder_Core_Glow"
+    },
+    {
+      "SpawnerId": "Wayfinder_Sparkles"
+    },
+    {
+      "SpawnerId": "Wayfinder_Spiral_Motes"
+    }
+  ]
+}

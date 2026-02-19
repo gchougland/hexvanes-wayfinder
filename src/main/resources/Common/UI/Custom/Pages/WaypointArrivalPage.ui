@@ -1,0 +1,58 @@
+$C = "../Common.ui";
+
+$C.@DecoratedContainer {
+  Anchor: (Width: 420, Height: 280);
+
+  #Title {
+    Group {
+      $C.@Title {
+        @Text = %server.customUI.wayfinder.arrived;
+      }
+    }
+  }
+
+  #Content {
+    Group {
+      LayoutMode: Top;
+      FlexWeight: 1;
+      Padding: (Full: 20);
+
+      // Waypoint name header
+      Label #WaypointName {
+        Style: (RenderBold: true, FontSize: 18, HorizontalAlignment: Center);
+        Padding: (Bottom: 10);
+      }
+
+      // Message body
+      Label #WaypointMessage {
+        FlexWeight: 1;
+        Style: (HorizontalAlignment: Center);
+        Padding: (Bottom: 10);
+      }
+
+      // Progress indicator
+      Label #Progress {
+        Style: (TextColor: #888888, HorizontalAlignment: Center);
+        Padding: (Bottom: 15);
+      }
+
+      // Buttons
+      Group {
+        LayoutMode: Left;
+        Anchor: (Height: 44);
+
+        $C.@TextButton #ContinueButton {
+          @Text = %server.customUI.wayfinder.continue;
+          FlexWeight: 1;
+        }
+
+        Group { Anchor: (Width: 20); }
+
+        $C.@TextButton #StopButton {
+          @Text = %server.customUI.wayfinder.stopNavigation;
+          FlexWeight: 1;
+        }
+      }
+    }
+  }
+}
