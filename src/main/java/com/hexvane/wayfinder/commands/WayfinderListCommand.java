@@ -47,4 +47,9 @@ public class WayfinderListCommand extends AbstractPlayerCommand {
         }
         context.sendMessage(Message.raw(sb.toString().trim()));
     }
+
+    @Override
+    protected boolean canGeneratePermission() {
+        return false;
+    }
 }

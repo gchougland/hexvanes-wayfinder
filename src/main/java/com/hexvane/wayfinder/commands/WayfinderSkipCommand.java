@@ -50,4 +50,9 @@ public class WayfinderSkipCommand extends AbstractPlayerCommand {
                     "' completed (skipped last waypoint)."));
         }
     }
+
+    @Override
+    protected boolean canGeneratePermission() {
+        return false;
+    }
 }

@@ -39,4 +39,9 @@ public class WayfinderStopCommand extends AbstractPlayerCommand {
         plugin.getNavigationManager().stopNavigation(ref);
         context.sendMessage(Message.raw("Navigation stopped."));
     }
+
+    @Override
+    protected boolean canGeneratePermission() {
+        return false;
+    }
 }

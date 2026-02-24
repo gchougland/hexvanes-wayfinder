@@ -63,4 +63,9 @@ public class WayfinderStartCommand extends AbstractPlayerCommand {
         context.sendMessage(Message.raw("Started navigation on route '" + routeName +
                 "'. Head to: " + wpName + " (" + session.getProgressString() + ")"));
     }
+
+    @Override
+    protected boolean canGeneratePermission() {
+        return false;
+    }
 }
