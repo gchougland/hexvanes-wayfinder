@@ -77,4 +77,9 @@ public class WayfinderPreviewCommand extends AbstractPlayerCommand {
         context.sendMessage(Message.raw("Previewing route '" + routeName +
                 "' - " + route.getWaypointCount() + " waypoint markers spawned."));
     }
+
+    @Override
+    protected boolean canGeneratePermission() {
+        return false;
+    }
 }

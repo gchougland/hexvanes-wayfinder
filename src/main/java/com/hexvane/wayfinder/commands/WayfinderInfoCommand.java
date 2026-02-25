@@ -71,4 +71,9 @@ public class WayfinderInfoCommand extends AbstractPlayerCommand {
 
         context.sendMessage(Message.raw(sb.toString().trim()));
     }
+
+    @Override
+    protected boolean canGeneratePermission() {
+        return false;
+    }
 }
