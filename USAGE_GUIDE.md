@@ -67,6 +67,7 @@ All waypoint indices are **1-based** (first waypoint = 1, second = 2, etc.).
 | `/wf stop` | Stop your current navigation |
 | `/wf skip` | Skip to the next waypoint |
 | `/wf preview <route>` | Spawn particles at all waypoints for a quick visual overview |
+| `/wf permission` | Print the exact permission node for Wayfinder (use this to get the string for `/perm`) |
 
 ## Building a Route - Step by Step
 
@@ -166,6 +167,14 @@ Examples:
 - When the player enters the waypoint's **arrival radius**, the next waypoint activates (and any arrival sound/command runs)
 - If the waypoint has a **message**, an arrival popup appears with Continue/Stop Navigation buttons
 - When the last waypoint is reached, the route completion command runs (if set) and navigation ends automatically
+
+## Permissions
+
+Hytale **auto-generates** a permission node for each command from the plugin manifest. The format is **`<group>.<pluginname>.command.wayfinder`** for the base and **`<group>.<pluginname>.command.wayfinder.<subcommand>`** for each subcommand (all lowercase). **Group** and **Plugin name** come from the manifest (Name is usually the Gradle project name, e.g. the project folder). Example: if Group is `hexvane` and Name is `HexvanesWayfinder`, the base is **`hexvane.hexvaneswayfinder.command.wayfinder`** and subcommands are **`hexvane.hexvaneswayfinder.command.wayfinder.start`**, **`hexvane.hexvaneswayfinder.command.wayfinder.create`**, etc.
+
+**Granting permissions** is done through the server’s permission system (e.g. giving players or groups the nodes above). Hytale requires **both** the **base** permission and the **subcommand** permission. Granting only `.start` or `.stop` is not enough; the player must also have the base. So: **All commands:** grant **`<base>.*`**. **Only /wf start:** grant **`<base>`** and **`<base>.start`**. **Only /wf stop:** grant **`<base>`** and **`<base>.stop`**. Example for start and stop only: `/perm user add <player> hexvane.hexvaneswayfinder.command.wayfinder` then add `....command.wayfinder.start` and `....command.wayfinder.stop`. Replace the prefix with your server base (see below).
+
+**To see the exact permissions on your server:** run **`/wf permission`**. It prints the base, start, and stop permission nodes and example `/perm` commands.
 
 ## Configuration
 
