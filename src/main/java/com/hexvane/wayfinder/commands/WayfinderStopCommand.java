@@ -21,6 +21,7 @@ public class WayfinderStopCommand extends AbstractPlayerCommand {
     public WayfinderStopCommand(@Nonnull WayfinderPlugin plugin) {
         super("stop", "Stop current navigation");
         this.plugin = plugin;
+        requireNoPermission();
     }
 
     @Override
@@ -38,10 +39,5 @@ public class WayfinderStopCommand extends AbstractPlayerCommand {
 
         plugin.getNavigationManager().stopNavigation(ref);
         context.sendMessage(Message.raw("Navigation stopped."));
-    }
-
-    @Override
-    protected boolean canGeneratePermission() {
-        return false;
     }
 }

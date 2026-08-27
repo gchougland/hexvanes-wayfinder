@@ -7,7 +7,7 @@ import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
-import com.hypixel.hytale.server.core.command.system.CommandUtil;
+import com.hypixel.hytale.server.core.command.system.arguments.system.RequiredArg;
 import com.hypixel.hytale.server.core.command.system.basecommands.AbstractPlayerCommand;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.World;
@@ -20,11 +20,13 @@ import javax.annotation.Nonnull;
  */
 public class WayfinderInfoCommand extends AbstractPlayerCommand {
     private final WayfinderPlugin plugin;
+    private final RequiredArg<String> routeArg;
 
     public WayfinderInfoCommand(@Nonnull WayfinderPlugin plugin) {
         super("info", "Show route details");
         this.plugin = plugin;
-        this.setAllowsExtraArguments(true);
+        this.routeArg = this.withRequiredArg("route", "commands.wayfinder.arg.route.desc", WayfinderArgTypes.ROUTE_NAME);
+        requireNoPermission();
     }
 
     @Override
@@ -35,17 +37,7 @@ public class WayfinderInfoCommand extends AbstractPlayerCommand {
             @Nonnull PlayerRef playerRef,
             @Nonnull World world) {
 
-        String rawArgs = CommandUtil.stripCommandName(context.getInputString()).trim();
-        if (rawArgs.startsWith("info")) {
-            rawArgs = rawArgs.substring(4).trim();
-        }
-
-        if (rawArgs.isEmpty()) {
-            context.sendMessage(Message.raw("Usage: /wayfinder info <route>"));
-            return;
-        }
-
-        String routeName = rawArgs;
+        String routeName = context.get(routeArg);
         Route route = plugin.getRouteStorage().get(routeName);
         if (route == null) {
             context.sendMessage(Message.raw("Route not found: " + routeName));
@@ -70,10 +62,5 @@ public class WayfinderInfoCommand extends AbstractPlayerCommand {
         }
 
         context.sendMessage(Message.raw(sb.toString().trim()));
-    }
-
-    @Override
-    protected boolean canGeneratePermission() {
-        return false;
     }
 }

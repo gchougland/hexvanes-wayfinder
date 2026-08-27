@@ -6,7 +6,9 @@ import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
-import com.hypixel.hytale.server.core.command.system.CommandUtil;
+import com.hypixel.hytale.server.core.command.system.arguments.system.OptionalArg;
+import com.hypixel.hytale.server.core.command.system.arguments.system.RequiredArg;
+import com.hypixel.hytale.server.core.command.system.arguments.types.ArgTypes;
 import com.hypixel.hytale.server.core.command.system.basecommands.AbstractPlayerCommand;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.World;
@@ -15,15 +17,18 @@ import javax.annotation.Nonnull;
 
 /**
  * Set the command to run when a player completes the entire route.
- * The command is executed as the player. Usage: /wayfinder setcompletioncommand <route> <command>
+ * Usage: /wayfinder setcompletioncommand <route> [command]
  */
 public class WayfinderSetCompletionCommand extends AbstractPlayerCommand {
     private final WayfinderPlugin plugin;
+    private final RequiredArg<String> routeArg;
+    private final OptionalArg<String> commandArg;
 
     public WayfinderSetCompletionCommand(@Nonnull WayfinderPlugin plugin) {
         super("setcompletioncommand", "Set command to run when route is completed");
         this.plugin = plugin;
-        this.setAllowsExtraArguments(true);
+        this.routeArg = this.withRequiredArg("route", "commands.wayfinder.arg.route.desc", WayfinderArgTypes.ROUTE_NAME);
+        this.commandArg = this.withOptionalArg("command", "commands.wayfinder.arg.command.desc", ArgTypes.GREEDY_STRING);
     }
 
     @Override
@@ -34,25 +39,14 @@ public class WayfinderSetCompletionCommand extends AbstractPlayerCommand {
             @Nonnull PlayerRef playerRef,
             @Nonnull World world) {
 
-        String rawArgs = CommandUtil.stripCommandName(context.getInputString()).trim();
-        if (rawArgs.startsWith("setcompletioncommand")) {
-            rawArgs = rawArgs.substring(20).trim();
-        }
-
-        String[] parts = rawArgs.split("\\s+", 2);
-        if (parts.length < 1 || parts[0].isEmpty()) {
-            context.sendMessage(Message.raw("Usage: /wayfinder setcompletioncommand <route> [command]"));
-            return;
-        }
-
-        String routeName = parts[0];
+        String routeName = context.get(routeArg);
         Route route = plugin.getRouteStorage().get(routeName);
         if (route == null) {
             context.sendMessage(Message.raw("Route not found: " + routeName));
             return;
         }
 
-        String command = parts.length > 1 ? parts[1].trim() : "";
+        String command = context.provided(commandArg) ? context.get(commandArg).trim() : "";
         route.setCompletionCommand(command.isEmpty() ? null : command);
         plugin.getRouteStorage().save(route);
 

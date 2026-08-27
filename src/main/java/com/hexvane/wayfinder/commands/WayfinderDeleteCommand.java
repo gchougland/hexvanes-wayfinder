@@ -5,7 +5,7 @@ import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
-import com.hypixel.hytale.server.core.command.system.CommandUtil;
+import com.hypixel.hytale.server.core.command.system.arguments.system.RequiredArg;
 import com.hypixel.hytale.server.core.command.system.basecommands.AbstractPlayerCommand;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.World;
@@ -18,11 +18,12 @@ import javax.annotation.Nonnull;
  */
 public class WayfinderDeleteCommand extends AbstractPlayerCommand {
     private final WayfinderPlugin plugin;
+    private final RequiredArg<String> routeArg;
 
     public WayfinderDeleteCommand(@Nonnull WayfinderPlugin plugin) {
         super("delete", "Delete a route");
         this.plugin = plugin;
-        this.setAllowsExtraArguments(true);
+        this.routeArg = this.withRequiredArg("route", "commands.wayfinder.arg.route.desc", WayfinderArgTypes.ROUTE_NAME);
     }
 
     @Override
@@ -33,22 +34,7 @@ public class WayfinderDeleteCommand extends AbstractPlayerCommand {
             @Nonnull PlayerRef playerRef,
             @Nonnull World world) {
 
-        String rawArgs = CommandUtil.stripCommandName(context.getInputString()).trim();
-        if (rawArgs.startsWith("delete")) {
-            rawArgs = rawArgs.substring(6).trim();
-        }
-
-        if (rawArgs.isEmpty()) {
-            context.sendMessage(Message.raw("Usage: /wayfinder delete <routeName>"));
-            return;
-        }
-
-        String routeName = rawArgs;
-        if (plugin.getRouteStorage().get(routeName) == null) {
-            context.sendMessage(Message.raw("Route not found: " + routeName));
-            return;
-        }
-
+        String routeName = context.get(routeArg);
         plugin.getRouteStorage().delete(routeName);
         context.sendMessage(Message.raw("Deleted route: " + routeName));
     }

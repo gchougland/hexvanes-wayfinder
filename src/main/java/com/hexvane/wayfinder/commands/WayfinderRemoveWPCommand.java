@@ -6,7 +6,7 @@ import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
-import com.hypixel.hytale.server.core.command.system.CommandUtil;
+import com.hypixel.hytale.server.core.command.system.arguments.system.RequiredArg;
 import com.hypixel.hytale.server.core.command.system.basecommands.AbstractPlayerCommand;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.World;
@@ -19,11 +19,14 @@ import javax.annotation.Nonnull;
  */
 public class WayfinderRemoveWPCommand extends AbstractPlayerCommand {
     private final WayfinderPlugin plugin;
+    private final RequiredArg<String> routeArg;
+    private final RequiredArg<Integer> indexArg;
 
     public WayfinderRemoveWPCommand(@Nonnull WayfinderPlugin plugin) {
         super("removewaypoint", "Remove a waypoint by index");
         this.plugin = plugin;
-        this.setAllowsExtraArguments(true);
+        this.routeArg = this.withRequiredArg("route", "commands.wayfinder.arg.route.desc", WayfinderArgTypes.ROUTE_NAME);
+        this.indexArg = this.withRequiredArg("index", "commands.wayfinder.arg.index.desc", WayfinderArgTypes.WAYPOINT_INDEX);
     }
 
     @Override
@@ -34,32 +37,14 @@ public class WayfinderRemoveWPCommand extends AbstractPlayerCommand {
             @Nonnull PlayerRef playerRef,
             @Nonnull World world) {
 
-        String rawArgs = CommandUtil.stripCommandName(context.getInputString()).trim();
-        if (rawArgs.startsWith("removewaypoint")) {
-            rawArgs = rawArgs.substring(14).trim();
-        }
-
-        String[] parts = rawArgs.split("\\s+");
-        if (parts.length < 2) {
-            context.sendMessage(Message.raw("Usage: /wayfinder removewaypoint <route> <index>"));
-            return;
-        }
-
-        String routeName = parts[0];
+        String routeName = context.get(routeArg);
         Route route = plugin.getRouteStorage().get(routeName);
         if (route == null) {
             context.sendMessage(Message.raw("Route not found: " + routeName));
             return;
         }
 
-        int index;
-        try {
-            index = Integer.parseInt(parts[1]) - 1; // 1-indexed for user
-        } catch (NumberFormatException e) {
-            context.sendMessage(Message.raw("Invalid index: " + parts[1]));
-            return;
-        }
-
+        int index = context.get(indexArg) - 1;
         if (index < 0 || index >= route.getWaypointCount()) {
             context.sendMessage(Message.raw("Index out of range. Route has " +
                     route.getWaypointCount() + " waypoints."));

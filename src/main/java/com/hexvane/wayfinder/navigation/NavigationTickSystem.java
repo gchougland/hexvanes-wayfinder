@@ -12,7 +12,7 @@ import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.component.query.Query;
 import com.hypixel.hytale.component.system.tick.EntityTickingSystem;
 import com.hypixel.hytale.logger.HytaleLogger;
-import com.hypixel.hytale.math.vector.Vector3d;
+import org.joml.Vector3d;
 import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.modules.entity.component.TransformComponent;
@@ -158,9 +158,9 @@ public class NavigationTickSystem extends EntityTickingSystem<EntityStore> {
         // Run waypoint arrival command if set (executed as console so route creator's intent works without player perms)
         String arrivalCmd = waypoint.getArrivalCommand();
         if (arrivalCmd != null && !arrivalCmd.isEmpty()) {
-            Player playerComponent = store.getComponent(playerRef, Player.getComponentType());
-            if (playerComponent != null) {
-                String cmd = substitutePlayerPlaceholder(arrivalCmd.trim(), playerComponent);
+            PlayerRef pRef = store.getComponent(playerRef, PlayerRef.getComponentType());
+            if (pRef != null) {
+                String cmd = substitutePlayerPlaceholder(arrivalCmd.trim(), pRef);
                 if (cmd.startsWith("/")) {
                     cmd = cmd.substring(1);
                 }
@@ -183,9 +183,9 @@ public class NavigationTickSystem extends EntityTickingSystem<EntityStore> {
             // Route complete - run completion command if set (executed as console so route creator's intent works without player perms)
             String completionCommand = session.getRoute().getCompletionCommand();
             if (completionCommand != null && !completionCommand.isEmpty()) {
-                Player playerComponent = store.getComponent(playerRef, Player.getComponentType());
-                if (playerComponent != null) {
-                    String cmd = substitutePlayerPlaceholder(completionCommand.trim(), playerComponent);
+                PlayerRef pRef = store.getComponent(playerRef, PlayerRef.getComponentType());
+                if (pRef != null) {
+                    String cmd = substitutePlayerPlaceholder(completionCommand.trim(), pRef);
                     if (cmd.startsWith("/")) {
                         cmd = cmd.substring(1);
                     }
@@ -252,15 +252,15 @@ public class NavigationTickSystem extends EntityTickingSystem<EntityStore> {
     }
 
     private void sendMessage(@Nonnull Ref<EntityStore> playerRef, @Nonnull Store<EntityStore> store, @Nonnull String message) {
-        Player player = store.getComponent(playerRef, Player.getComponentType());
-        if (player != null) {
-            player.sendMessage(Message.raw(message));
+        PlayerRef pRef = store.getComponent(playerRef, PlayerRef.getComponentType());
+        if (pRef != null) {
+            pRef.sendMessage(Message.raw(message));
         }
     }
 
-    /** Replaces {player} in the command with the player's display name for console-executed commands. */
-    private static String substitutePlayerPlaceholder(@Nonnull String command, @Nonnull Player player) {
-        String name = player.getDisplayName();
+    /** Replaces {player} in the command with the player's username for console-executed commands. */
+    private static String substitutePlayerPlaceholder(@Nonnull String command, @Nonnull PlayerRef playerRef) {
+        String name = playerRef.getUsername();
         return name != null ? command.replace("{player}", name) : command;
     }
 }

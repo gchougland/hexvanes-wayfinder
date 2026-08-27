@@ -28,10 +28,6 @@ public class WayfinderCommand extends AbstractCommandCollection {
         this.addSubCommand(new WayfinderListCommand(plugin));
         this.addSubCommand(new WayfinderInfoCommand(plugin));
         this.addSubCommand(new WayfinderPreviewCommand(plugin));
-    }
-
-    @Override
-    protected boolean canGeneratePermission() {
-        return false;
+        requireNoPermission();
     }
 }

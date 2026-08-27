@@ -23,6 +23,7 @@ public class WayfinderListCommand extends AbstractPlayerCommand {
     public WayfinderListCommand(@Nonnull WayfinderPlugin plugin) {
         super("list", "List all routes");
         this.plugin = plugin;
+        requireNoPermission();
     }
 
     @Override
@@ -46,10 +47,5 @@ public class WayfinderListCommand extends AbstractPlayerCommand {
             sb.append("  - ").append(name).append(" (").append(wpCount).append(" waypoints)\n");
         }
         context.sendMessage(Message.raw(sb.toString().trim()));
-    }
-
-    @Override
-    protected boolean canGeneratePermission() {
-        return false;
     }
 }

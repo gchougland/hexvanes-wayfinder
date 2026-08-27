@@ -23,6 +23,7 @@ public class WayfinderSkipCommand extends AbstractPlayerCommand {
     public WayfinderSkipCommand(@Nonnull WayfinderPlugin plugin) {
         super("skip", "Skip to the next waypoint");
         this.plugin = plugin;
+        requireNoPermission();
     }
 
     @Override
@@ -49,10 +50,5 @@ public class WayfinderSkipCommand extends AbstractPlayerCommand {
             context.sendMessage(Message.raw("Route '" + session.getRoute().getName() +
                     "' completed (skipped last waypoint)."));
         }
-    }
-
-    @Override
-    protected boolean canGeneratePermission() {
-        return false;
     }
 }

@@ -5,16 +5,18 @@ import com.hexvane.wayfinder.data.Route;
 import com.hexvane.wayfinder.data.Waypoint;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
-import com.hypixel.hytale.math.vector.Vector3d;
 import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
-import com.hypixel.hytale.server.core.command.system.CommandUtil;
+import com.hypixel.hytale.server.core.command.system.arguments.system.OptionalArg;
+import com.hypixel.hytale.server.core.command.system.arguments.system.RequiredArg;
+import com.hypixel.hytale.server.core.command.system.arguments.types.ArgTypes;
 import com.hypixel.hytale.server.core.command.system.basecommands.AbstractPlayerCommand;
 import com.hypixel.hytale.server.core.modules.entity.component.TransformComponent;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import javax.annotation.Nonnull;
+import org.joml.Vector3d;
 
 /**
  * Add a waypoint at the player's current position.
@@ -22,11 +24,14 @@ import javax.annotation.Nonnull;
  */
 public class WayfinderAddWaypointCommand extends AbstractPlayerCommand {
     private final WayfinderPlugin plugin;
+    private final RequiredArg<String> routeArg;
+    private final OptionalArg<String> nameArg;
 
     public WayfinderAddWaypointCommand(@Nonnull WayfinderPlugin plugin) {
         super("addwaypoint", "Add a waypoint at your position");
         this.plugin = plugin;
-        this.setAllowsExtraArguments(true);
+        this.routeArg = this.withRequiredArg("route", "commands.wayfinder.arg.route.desc", WayfinderArgTypes.ROUTE_NAME);
+        this.nameArg = this.withOptionalArg("name", "commands.wayfinder.arg.name.desc", ArgTypes.GREEDY_STRING);
     }
 
     @Override
@@ -37,21 +42,7 @@ public class WayfinderAddWaypointCommand extends AbstractPlayerCommand {
             @Nonnull PlayerRef playerRef,
             @Nonnull World world) {
 
-        String rawArgs = CommandUtil.stripCommandName(context.getInputString()).trim();
-        if (rawArgs.startsWith("addwaypoint")) {
-            rawArgs = rawArgs.substring(11).trim();
-        }
-
-        if (rawArgs.isEmpty()) {
-            context.sendMessage(Message.raw("Usage: /wayfinder addwaypoint <route> [name]"));
-            return;
-        }
-
-        // Parse: first word is route name, rest is optional waypoint name
-        String[] parts = rawArgs.split("\\s+", 2);
-        String routeName = parts[0];
-        String waypointName = parts.length > 1 ? parts[1] : null;
-
+        String routeName = context.get(routeArg);
         Route route = plugin.getRouteStorage().get(routeName);
         if (route == null) {
             context.sendMessage(Message.raw("Route not found: " + routeName));
@@ -65,7 +56,8 @@ public class WayfinderAddWaypointCommand extends AbstractPlayerCommand {
         }
 
         Vector3d pos = transform.getPosition();
-        if (waypointName == null) {
+        String waypointName = context.provided(nameArg) ? context.get(nameArg) : null;
+        if (waypointName == null || waypointName.isBlank()) {
             waypointName = "Waypoint " + (route.getWaypointCount() + 1);
         }
 

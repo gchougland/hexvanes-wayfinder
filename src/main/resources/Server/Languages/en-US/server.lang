@@ -1,3 +1,15 @@
 customUI.wayfinder.arrived=Waypoint Reached
 customUI.wayfinder.continue=Continue
 customUI.wayfinder.stopNavigation=Stop
+commands.wayfinder.argtype.route.name=Route
+commands.wayfinder.argtype.route.usage=an existing Wayfinder route name
+commands.wayfinder.argtype.index.name=Waypoint index
+commands.wayfinder.argtype.index.usage=a 1-based waypoint index
+commands.wayfinder.arg.route.desc=An existing Wayfinder route
+commands.wayfinder.arg.routeName.desc=Name of the new route
+commands.wayfinder.arg.index.desc=1-based waypoint index
+commands.wayfinder.arg.name.desc=Waypoint display name
+commands.wayfinder.arg.message.desc=Arrival popup message
+commands.wayfinder.arg.radius.desc=Arrival radius in blocks
+commands.wayfinder.arg.command.desc=Console command to run. Use {player} for the player name. Omit to clear
+commands.wayfinder.arg.sound.desc=Sound event ID. Omit to clear
